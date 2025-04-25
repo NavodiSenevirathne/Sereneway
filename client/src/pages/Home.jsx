@@ -79,12 +79,14 @@ export default function Home() {
                                 <h3 className="text-xl font-semibold mb-2 text-gray-800 hover:text-white">Customized Packages</h3>
                                 <p className="text-gray-600 hover:text-white">Tailored just for you</p>
                             </div>
+                            <Link to="/user/tours">
                             <div 
                                 className="bg-white p-6 rounded-lg shadow-lg w-[200px] text-center cursor-pointer hover:bg-blue-600 hover:text-white transition duration-300"
                             >
                                 <h3 className="text-xl font-semibold mb-2 text-gray-800 hover:text-white">Our Packages</h3>
                                 <p className="text-gray-600 hover:text-white">Explore our special deals</p>
                             </div>
+                            </Link>
                         </div>
                     </div>
                 </section>
