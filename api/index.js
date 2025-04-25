@@ -5,7 +5,7 @@ dotenv.config();  // Initialize dotenv
 import videocallRouter from './routes/VideoCall.routes.js';  // Import the router
 import feedbackRouter from './routes/feedback.routes.js';  // Import the router
 import cookieParser from 'cookie-parser';
-
+const paymentRoutes = require('./routes/paymentRoutes');
 
 mongoose.connect(process.env.MONGO).then(() => {
   console.log('Connected to MongoDB');
@@ -32,6 +32,8 @@ app.listen(5001,()=>{
 
 app.use("/api/videocalls", videocallRouter); 
 app.use("/api/feedback", feedbackRouter);
+
+app.use('/api/payments', paymentRoutes);
 
 app.use((err, req, res, next) => {
     const statusCode = err.statusCode || 500;
