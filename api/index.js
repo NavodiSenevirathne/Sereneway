@@ -10,6 +10,7 @@ import driverRouter from './routes/driverRoutes.js';  // Import the driver route
 import userRouter from './routes/user.routes.js';  // Import the user routes
 import cors from 'cors'; // Import CORS
 
+const paymentRoutes = require('./routes/paymentRoutes');
 
 mongoose.connect(process.env.MONGO).then(() => {
   console.log('Connected to MongoDB');
@@ -47,6 +48,8 @@ app.use("/api/feedback", feedbackRouter);
 app.use("/api/tourguides", tourGuideRouter);  // Add the tour guide routes
 app.use("/api/drivers", driverRouter);  // Add the driver routes
 app.use("/api/users", userRouter);  // Add the user routes
+
+app.use('/api/payments', paymentRoutes);
 
 app.use((err, req, res, next) => {
     const statusCode = err.statusCode || 500;

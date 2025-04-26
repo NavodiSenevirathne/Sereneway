@@ -15,6 +15,13 @@ import Dashboard from './pages/Admin/Dashboard';
 import AdminDashboard from './pages/Admin/AdminUserManagement';
 import BookingManagement from './pages/Admin/BookingManagement';
 import CustomerDashboard from './pages/Admin/CustomerDashboard';
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import "./index.css";
+import PaymentForm from "./pages/PaymentForm";
+import ManagePayments from "./pages/ManagePayments";
+import UpdatePayment from "./pages/UpdatePayment";
+import Navbar from "./components/Navbar";
+
 
 export default function App() {
   return (  //  You need to return JSX
@@ -39,5 +46,22 @@ export default function App() {
     </Routes>
     <Footer/>
     </BrowserRouter>
+  );
+}
+
+function App() {
+  return (
+    <div className="App">
+      <BrowserRouter>
+        <Navbar />
+
+        <Routes>
+          <Route path="/" element={<PaymentForm />} />
+          <Route path="/manage-payments" element={<ManagePayments />} />
+          <Route path="/updatePayment/:id" element={<UpdatePayment />} />
+        </Routes>
+        {/* <Footer /> */}
+      </BrowserRouter>
+    </div>
   );
 }
