@@ -18,12 +18,12 @@ import Dashboard from './pages/Admin/Dashboard';
 import AdminDashboard from './pages/Admin/AdminUserManagement';
 import BookingManagement from './pages/Admin/BookingManagement';
 import CustomerDashboard from './pages/Admin/CustomerDashboard';
-import { BrowserRouter, Route, Routes } from "react-router-dom";
 import "./index.css";
 import PaymentForm from "./pages/PaymentForm";
 import ManagePayments from "./pages/ManagePayments";
 import UpdatePayment from "./pages/UpdatePayment";
 import Navbar from "./components/Navbar";
+import TourPackageDetails from "./pages/User/TourDetails";
 
 
 export default function App() {
@@ -36,25 +36,19 @@ export default function App() {
       <Route path="/share" element={<Share />} />
       <Route path="/aboutus" element={<AboutUs />} />
       <Route path="/VideoCallForm" element={<VideoCallForum />} />
+      <Route path="/payment" element={<PaymentForm />} />
+      <Route path="/manage-payments" element={<ManagePayments />} />
+      <Route path="/updatePayment/:id" element={<UpdatePayment />} />
+      <Route path="/login" element={<Login />} />
+      <Route path="/dashboard" element={< CustomerDashboard/>} />
+
+      <Route path="/register" element={<Register />} />
+      <Route path="/user/tours/:id" element={<TourPackageDetails />} />
+
     </Routes>
     
     </BrowserRouter>
   );
 }
 
-function App() {
-  return (
-    <div className="App">
-      <BrowserRouter>
-        <Navbar />
-
-        <Routes>
-          <Route path="/" element={<PaymentForm />} />
-          <Route path="/manage-payments" element={<ManagePayments />} />
-          <Route path="/updatePayment/:id" element={<UpdatePayment />} />
-        </Routes>
-        {/* <Footer /> */}
-      </BrowserRouter>
-    </div>
-  );
-}
+//  You need to export the component  

@@ -17,12 +17,12 @@
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
+    "express-validator": "^7.2.1",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.12.1",
     "nodemailer": "^6.10.0",
     "nodemon": "^3.1.9",
-    "tms": "file:", 
-    "express-validator": "^7.2.1"
+    "tms": "file:"
   },
   "devDependencies": {
     "kill-port": "^2.0.1"
