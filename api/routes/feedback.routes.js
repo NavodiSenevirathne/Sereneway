@@ -6,7 +6,10 @@ import {
   updateFeedback, 
   deleteFeedback, 
   replyToFeedback,
-  getFeedbackStats
+  getFeedbackStats,
+  getAdminFeedbacks,
+  adminDeleteFeedback,
+  adminReplyToFeedback
 } from '../controllers/feedback.controller.js';
 
 const router = express.Router();
@@ -18,8 +21,19 @@ router.post('/create', createfeedback);
 router.get('/', getAllFeedbacks);
 
 // Get feedback statistics
-router.get('/stats', getFeedbackStats);
+router.get('/stats/summary', getFeedbackStats);
 
+// Admin routes - these must come before parameterized routes
+// Get all feedbacks with admin info
+router.get('/admin', getAdminFeedbacks);
+
+// Admin delete feedback
+router.delete('/admin/:id', adminDeleteFeedback);
+
+// Admin reply to feedback
+router.post('/admin/:id/reply', adminReplyToFeedback);
+
+// Parameterized routes
 // Get feedback by ID
 router.get('/:id', getFeedbackById);
 

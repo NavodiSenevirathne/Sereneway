@@ -1,13 +1,11 @@
-import cookieParser from "cookie-parser";
-import cors from "cors";
-import dotenv from "dotenv"; // Import dotenv
-import express from "express"; // Use import instead of require
-import mongoose from "mongoose";
-import feedbackRouter from "./routes/feedback.routes.js"; // Import the router
-import tourRoutes from "./routes/TourRequest.route.js";
-import videocallRouter from "./routes/VideoCall.routes.js"; // Import the router
+import express from 'express';  // Use import instead of require
+import mongoose from 'mongoose';  
+import dotenv from 'dotenv';  // Import dotenv 
+dotenv.config();  // Initialize dotenv
+import videocallRouter from './routes/VideoCall.routes.js';  // Import the router
+import feedbackRouter from './routes/feedback.routes.js';  // Import the router
+import cookieParser from 'cookie-parser';
 
-dotenv.config(); // Initialize dotenv
 
 mongoose
   .connect(process.env.MONGO)
@@ -19,6 +17,14 @@ mongoose
   });
 
 const app = express();
+
+const corsOptions = {
+  origin: 'http://localhost:5174', // Replace with the front-end URL
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Allow necessary methods
+  allowedHeaders: ['Content-Type', 'Authorization'], // Allow necessary headers
+};
+
+app.use(cors(corsOptions)); // Enable CORS with the defined options
 
 app.use(express.json());
 app.use(cookieParser());
@@ -36,7 +42,6 @@ app.listen(5001, () => {
 
 app.use("/api/videocalls", videocallRouter);
 app.use("/api/feedback", feedbackRouter);
-app.use("/api/tours", tourRoutes);
 
 app.use((err, req, res, next) => {
   const statusCode = err.statusCode || 500;
