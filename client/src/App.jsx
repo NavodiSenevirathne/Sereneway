@@ -1,12 +1,15 @@
-import {BrowserRouter , Routes, Route} from 'react-router-dom';
-import Share from './pages/User/Share';
-import AboutUs from './pages/User/AboutUs';
-import Home from './pages/User/Home';
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Share from "./pages/User/Share";
+import AboutUs from "./pages/User/AboutUs";
+import Home from "./pages/User/Home";
 import Register from './pages/User/Register';
 import Login from './pages/User/Login';
 
-import Header from './components/Header';
-import VideoCallForum from './components/VideoCallForm';
+import Header from "./components/Header";
+import VideoCallForum from "./components/VideoCallForm";
+import MyRequestedTours from "./pages/MyRequestedTours";
+import RequestTour from "./pages/RequestTour";
+import RequestedTours from "./pages/RequestedTours";
 import ShareAdmin from './pages/Admin/ShareAdmin';
 import VideoCallFormAdmin from './pages/Admin/VideoCallFormAdmin';
 import Footer from './components/Footer';
@@ -24,27 +27,17 @@ import Navbar from "./components/Navbar";
 
 
 export default function App() {
-  return (  //  You need to return JSX
+  return (
+    //  You need to return JSX
     <BrowserRouter>
-   
     <Header/>
     <Routes>
       <Route path="/" element={<Home />} />
       <Route path="/share" element={<Share />} />
       <Route path="/aboutus" element={<AboutUs />} />
       <Route path="/VideoCallForm" element={<VideoCallForum />} />
-      <Route path="/admin/feedback" element={<ShareAdmin />} />
-      <Route path="/admin/dashboard" element={<Dashboard />} />
-      <Route path="/admin/book" element={<BookingManagement />} />
-      <Route path="/admin/AdminuserManage" element={<AdminDashboard />} />
-      <Route path="/admin/CustomTour" element={<CustomerDashboard />} />
-
-      <Route path="/admin/videocall" element={<VideoCallFormAdmin />} />
-      <Route path="/dashboard/profile" element={<Profile />} />
-      <Route path="/login" element={<Login/>} />
-        <Route path="/register" element={<Register />} />
     </Routes>
-    <Footer/>
+    
     </BrowserRouter>
   );
 }
