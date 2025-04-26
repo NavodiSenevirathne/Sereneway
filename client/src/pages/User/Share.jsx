@@ -286,22 +286,18 @@ export default function Share() {
                   
                   {/* Action buttons */}
                   <div className="flex space-x-2">
-                    {(isAdmin || feedback.isOwnedByCurrentUser) && (
-                      <>
-                        <button 
-                          onClick={() => handleEdit(feedback)}
-                          className="text-blue-500 hover:text-blue-700"
-                        >
-                          <FaPen />
-                        </button>
-                        <button 
-                          onClick={() => handleDelete(feedback._id)}
-                          className="text-red-500 hover:text-red-700"
-                        >
-                          <FaTrash />
-                        </button>
-                      </>
-                    )}
+                    <button 
+                      onClick={() => handleEdit(feedback)}
+                      className="text-blue-500 hover:text-blue-700"
+                    >
+                      <FaPen />
+                    </button>
+                    <button 
+                      onClick={() => handleDelete(feedback._id)}
+                      className="text-red-500 hover:text-red-700"
+                    >
+                      <FaTrash />
+                    </button>
                     {isAdmin && (
                       <button 
                         onClick={() => setReplyingTo(feedback._id)}
