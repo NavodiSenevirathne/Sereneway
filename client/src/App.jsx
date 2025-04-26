@@ -1,61 +1,43 @@
 import {BrowserRouter , Routes, Route} from 'react-router-dom';
-import Share from './pages/Share';
-import AboutUs from './pages/aboutus';
-import Home from './pages/Home';
+import Share from './pages/User/Share';
+import AboutUs from './pages/User/AboutUs';
+import Home from './pages/User/Home';
+import Register from './pages/User/Register';
+import Login from './pages/User/Login';
+
 import Header from './components/Header';
 import VideoCallForum from './components/VideoCallForm';
-import AdminLayout from './components/AdminLayout';
-import UserLayout from './components/UserLayout';
-import CreatePackage from './pages/Admin/CreatePackage';
-import PackageList from './pages/Admin/PackageList';
-import EditPackage from './pages/Admin/EditPackage';
-import CusSidePackageList from './pages/User/CusSidePackageList';
-import TourDetails from './pages/User/TourDetails';
-import Booking from './pages/User/Booking';
-import PackageDetailsAdmin from './pages/Admin/PackageDetailsAdmin';
-import AdminBookingList from './pages/Admin/AdminBookingList';
-import AdminBookingDetails from './pages/Admin/AdminBookingDetails';
-import UserBookings from './pages/User/UserBookings';
-import TourPerformanceReport from './pages/Admin/TourPerformanceReport';
-
+import ShareAdmin from './pages/Admin/ShareAdmin';
+import VideoCallFormAdmin from './pages/Admin/VideoCallFormAdmin';
+import Footer from './components/Footer';
+import Profile from './pages/User/Profile';
+import Dashboard from './pages/Admin/Dashboard';
+import AdminDashboard from './pages/Admin/AdminUserManagement';
+import BookingManagement from './pages/Admin/BookingManagement';
+import CustomerDashboard from './pages/Admin/CustomerDashboard';
 
 export default function App() {
   return (  //  You need to return JSX
     <BrowserRouter>
-    
+   
     <Header/>
     <Routes>
-      <Route>
       <Route path="/" element={<Home />} />
       <Route path="/share" element={<Share />} />
       <Route path="/aboutus" element={<AboutUs />} />
       <Route path="/VideoCallForm" element={<VideoCallForum />} />
+      <Route path="/admin/feedback" element={<ShareAdmin />} />
+      <Route path="/admin/dashboard" element={<Dashboard />} />
+      <Route path="/admin/book" element={<BookingManagement />} />
+      <Route path="/admin/AdminuserManage" element={<AdminDashboard />} />
+      <Route path="/admin/CustomTour" element={<CustomerDashboard />} />
 
-      </Route>
-
-      {/* Admin routes with AdminLayout */}
-      <Route path="/admin" element={<AdminLayout />}>
-            <Route path="create-package" element={<CreatePackage />} />
-            <Route path="tour_packages" element={<PackageList />} />
-            <Route path="tour_packages/:id" element={<PackageDetailsAdmin />} />
-            <Route path="edit-package/:id" element={<EditPackage />} />
-            <Route path="bookings" element={<AdminBookingList />} />
-            <Route path="bookings/:id" element={<AdminBookingDetails />} />
-            <Route path="reports/tour-performance" element={<TourPerformanceReport />} />
-          </Route>
-          
-          {/* User routes with UserLayout */}
-          <Route path="/user" element={<UserLayout />}>
-            <Route path="tours" element={<CusSidePackageList />} />
-            <Route path="tours/:id" element={<TourDetails />} />
-            <Route path="tours/:id/booking" element={<Booking />} />
-            {/* Remove the booking-success route */}
-            <Route path="my-bookings" element={<UserBookings />} />
-            
-          </Route>
-
+      <Route path="/admin/videocall" element={<VideoCallFormAdmin />} />
+      <Route path="/dashboard/profile" element={<Profile />} />
+      <Route path="/login" element={<Login/>} />
+        <Route path="/register" element={<Register />} />
     </Routes>
-    
+    <Footer/>
     </BrowserRouter>
   );
 }

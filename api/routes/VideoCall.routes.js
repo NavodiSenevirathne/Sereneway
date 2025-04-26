@@ -1,6 +1,7 @@
 // VideoCall.routes.js
 import express from 'express';
-import videoCallController from '../controllers/VideoCall.controller.js';
+// import videoCallController from '../controllers/VideoCall.controller.js';
+import * as videoCallController from '../controllers/VideoCall.controller.js';
 
 const router = express.Router();
 
@@ -9,7 +10,7 @@ const router = express.Router();
  * @desc    Create a new video call request
  * @access  Public
  */
-router.post('/', videoCallController.createVideoCall);
+router.post('/', videoCallController.createVideoCallRequest);
 
 /**
  * @route   GET /api/videocalls
@@ -23,20 +24,20 @@ router.get('/', videoCallController.getAllVideoCallRequests);
  * @desc    Get video call request by ID
  * @access  Private (Should be protected in production)
  */
-router.get('/:id', videoCallController.getVideoCallById);
+router.get('/:id', videoCallController.getVideoCallRequest);
 
 /**
  * @route   PUT /api/videocalls/:id
  * @desc    Update video call request
  * @access  Private (Should be protected in production)
  */
-router.put('/:id', videoCallController.updateVideoCall);
+router.put('/:id', videoCallController.updateVideoCallRequest);
 
 /**
  * @route   DELETE /api/videocalls/:id
  * @desc    Delete video call request
  * @access  Private (Should be protected in production)
  */
-router.delete('/:id', videoCallController.deleteVideoCall);
+router.delete('/:id', videoCallController.deleteVideoCallRequest);
 
 export default router;
