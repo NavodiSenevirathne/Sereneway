@@ -2,6 +2,22 @@
 import mongoose from 'mongoose';
 const { Schema } = mongoose;
 
+// Define schema for admin replies
+const ReplySchema = new Schema({
+  text: {
+    type: String,
+    required: true
+  },
+  adminName: {
+    type: String,
+    required: true
+  },
+  date: {
+    type: Date,
+    default: Date.now
+  }
+});
+
 // Define schema for video call requests
 const VideoCallSchema = new Schema({
   name: {
@@ -45,6 +61,11 @@ const VideoCallSchema = new Schema({
   acceptedTerms: {
     type: Boolean,
     default: true
+  },
+  replies: [ReplySchema],
+  flaggedForReview: {
+    type: Boolean,
+    default: false
   }
 }, { timestamps: true });
 

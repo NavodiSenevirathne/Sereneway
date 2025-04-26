@@ -1,148 +1,142 @@
 // VideoCall.controller.js
 import VideoCall from '../models/VideoCall.models.js';
 
-// Controller methods for video call functionality
-const videoCallController = {
-  // Create a new video call request
-  createVideoCall: async (req, res) => {
-    try {
-      const { name, email, country, date, time, message } = req.body;
-      
-      // Validate required fields
-      if (!name || !email || !country) {
-        return res.status(400).json({ success: false, message: 'Name, email, and country are required fields' });
-      }
-      
-      // Create new video call request
-      const newVideoCall = new VideoCall({
-        name,
-        email,
-        country,
-        date,
-        time,
-        message
-      });
-      
-      // Save to database
-      const savedVideoCall = await newVideoCall.save();
-      
-      return res.status(201).json({
-        success: true,
-        message: 'Video call request submitted successfully',
-        data: savedVideoCall
-      });
-    } catch (error) {
-      console.error('Error creating video call request:', error);
-      return res.status(500).json({
-        success: false,
-        message: 'Server error while creating video call request',
-        error: error.message
-      });
-    }
-  },
-  
-  // Get all video call requests
-  getAllVideoCallRequests: async (req, res) => {
-    try {
-      const videoCallRequests = await VideoCall.find().sort({ createdAt: -1 });
-      
-      return res.status(200).json({
-        success: true,
-        count: videoCallRequests.length,
-        data: videoCallRequests
-      });
-    } catch (error) {
-      console.error('Error fetching video call requests:', error);
-      return res.status(500).json({
-        success: false,
-        message: 'Server error while fetching video call requests',
-        error: error.message
-      });
-    }
-  },
-  
-  // Get video call by ID
-  getVideoCallById: async (req, res) => {
-    try {
-      const videoCall = await VideoCall.findById(req.params.id);
-      
-      if (!videoCall) {
-        return res.status(404).json({
-          success: false,
-          message: 'Video call request not found'
-        });
-      }
-      
-      return res.status(200).json({
-        success: true,
-        data: videoCall
-      });
-    } catch (error) {
-      console.error('Error fetching video call request:', error);
-      return res.status(500).json({
-        success: false,
-        message: 'Server error while fetching video call request',
-        error: error.message
-      });
-    }
-  },
-  
-  // Update video call request
-  updateVideoCall: async (req, res) => {
-    try {
-      const videoCall = await VideoCall.findByIdAndUpdate(
-        req.params.id,
-        req.body,
-        { new: true, runValidators: true }
-      );
-      
-      if (!videoCall) {
-        return res.status(404).json({
-          success: false,
-          message: 'Video call request not found'
-        });
-      }
-      
-      return res.status(200).json({
-        success: true,
-        message: 'Video call request updated successfully',
-        data: videoCall
-      });
-    } catch (error) {
-      console.error('Error updating video call request:', error);
-      return res.status(500).json({
-        success: false,
-        message: 'Server error while updating video call request',
-        error: error.message
-      });
-    }
-  },
-  
-  // Delete video call request
-  deleteVideoCall: async (req, res) => {
-    try {
-      const videoCall = await VideoCall.findByIdAndDelete(req.params.id);
-      
-      if (!videoCall) {
-        return res.status(404).json({
-          success: false,
-          message: 'Video call request not found'
-        });
-      }
-      
-      return res.status(200).json({
-        success: true,
-        message: 'Video call request deleted successfully'
-      });
-    } catch (error) {
-      console.error('Error deleting video call request:', error);
-      return res.status(500).json({
-        success: false,
-        message: 'Server error while deleting video call request',
-        error: error.message
-      });
-    }
+// Create a new video call request
+export const createVideoCallRequest = async (req, res) => {
+  try {
+    const newRequest = new VideoCall(req.body);
+    await newRequest.save();
+    res.status(201).json(newRequest);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
   }
 };
 
-export default videoCallController;
+// Get all video call requests (admin only)
+export const getAllVideoCallRequests = async (req, res) => {
+  try {
+    const { search, sort, status } = req.query;
+    let query = {};
+
+    // Apply search filter if provided
+    if (search) {
+      query.$or = [
+        { name: { $regex: search, $options: 'i' } },
+        { email: { $regex: search, $options: 'i' } },
+        { country: { $regex: search, $options: 'i' } }
+      ];
+    }
+
+    // Apply status filter if provided
+    if (status && status !== 'all') {
+      query.status = status;
+    }
+
+    // Apply sorting
+    let sortOption = {};
+    if (sort) {
+      switch (sort) {
+        case 'dateAsc':
+          sortOption = { date: 1 };
+          break;
+        case 'dateDesc':
+          sortOption = { date: -1 };
+          break;
+        case 'nameAsc':
+          sortOption = { name: 1 };
+          break;
+        case 'nameDesc':
+          sortOption = { name: -1 };
+          break;
+        default:
+          sortOption = { createdAt: -1 };
+      }
+    }
+
+    const requests = await VideoCall.find(query).sort(sortOption);
+    res.status(200).json(requests);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// Get a single video call request
+export const getVideoCallRequest = async (req, res) => {
+  try {
+    const request = await VideoCall.findById(req.params.id);
+    if (!request) {
+      return res.status(404).json({ message: 'Video call request not found' });
+    }
+    res.status(200).json(request);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// Update a video call request
+export const updateVideoCallRequest = async (req, res) => {
+  try {
+    const updatedRequest = await VideoCall.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      { new: true }
+    );
+    if (!updatedRequest) {
+      return res.status(404).json({ message: 'Video call request not found' });
+    }
+    res.status(200).json(updatedRequest);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+};
+
+// Delete a video call request
+export const deleteVideoCallRequest = async (req, res) => {
+  try {
+    const deletedRequest = await VideoCall.findByIdAndDelete(req.params.id);
+    if (!deletedRequest) {
+      return res.status(404).json({ message: 'Video call request not found' });
+    }
+    res.status(200).json({ message: 'Video call request deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// Add a reply to a video call request
+export const addReply = async (req, res) => {
+  try {
+    const { text, adminName } = req.body;
+    const request = await VideoCall.findById(req.params.id);
+    
+    if (!request) {
+      return res.status(404).json({ message: 'Video call request not found' });
+    }
+
+    request.replies.push({ text, adminName });
+    await request.save();
+    
+    res.status(200).json(request);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+};
+
+// Flag a request for review
+export const flagForReview = async (req, res) => {
+  try {
+    const request = await VideoCall.findByIdAndUpdate(
+      req.params.id,
+      { flaggedForReview: true },
+      { new: true }
+    );
+    
+    if (!request) {
+      return res.status(404).json({ message: 'Video call request not found' });
+    }
+    
+    res.status(200).json(request);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+};

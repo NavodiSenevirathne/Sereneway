@@ -13,4 +13,7 @@ export default defineConfig({
   },
 
   plugins: [react()],
+  optimizeDeps: {
+    include: ["jspdf", "jspdf-autotable"],
+  },
 });
