@@ -1,10 +1,14 @@
 import { useEffect, useState } from "react";
 import React from 'react';
 import { Link } from "react-router-dom";
+import axios from "axios";
+
 
 export default function Home() {
     // State for the carousel
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
+    const [loading, setLoading] = useState(false);
+    const [featuredTours, setFeaturedTours] = useState([]);
     
     // Hero section carousel images
     const heroImages = [
@@ -33,6 +37,24 @@ export default function Home() {
         }, 6000); // 6 seconds interval
         
         return () => clearInterval(interval);
+    }, []);
+
+    useEffect(() => {
+        const fetchFeaturedTours = async () => {
+            try {
+                setLoading(true);
+                const response = await axios.get("/api/tours/getFeaturedTours");
+                if (response.data.success) {
+                    setFeaturedTours(response.data.data);
+                }
+            } catch (error) {
+                console.error("Error fetching featured tours:", error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchFeaturedTours();
     }, []);
 
     try {
@@ -121,31 +143,111 @@ export default function Home() {
                 </section>
 
                 <section data-name="popular-tours" className="py-16">
-                    <div className="max-w-7xl mx-auto px-4">
-                        <h2 className="text-3xl font-bold text-center mb-12">Popular Tours</h2>
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                            {[0, 1, 2].map((index) => (
-                                <div key={index} className="bg-white rounded-lg shadow-lg overflow-hidden">
-                                    <img
-                                        src={tourImages[index]}
-                                        alt={tourNames[index]}
-                                        className="w-full h-48 object-cover"
-                                    />
-                                    <div className="p-6">
-                                        <h3 className="text-xl font-semibold mb-2">{tourNames[index]}</h3>
-                                        <p className="text-gray-600 mb-4">Experience the beauty of nature and culture</p>
-                                        <div className="flex justify-between items-center">
-                                            <span className="text-blue-600 font-bold">$999</span>
-                                            <button className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
-                                                Book Now
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            ))}
+    <div className="max-w-7xl mx-auto px-4">
+        <h2 className="text-3xl font-bold text-center mb-12">Popular Tours</h2>
+        
+        {loading ? (
+            <div className="flex justify-center items-center h-48">
+                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+            </div>
+        ) : featuredTours.length === 0 ? (
+            <p className="text-center text-gray-500">No featured tours available at the moment.</p>
+        ) : (
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                {featuredTours.slice(0, 3).map((tour) => (
+                  <Link to={`/user/tours/${tour._id}`} key={tour._id} className="group">
+                    <div className="bg-white rounded-xl shadow-sm overflow-hidden hover:shadow-md transition-shadow duration-300 border border-gray-100 h-full flex flex-col">
+                      <div className="relative h-56 overflow-hidden">
+                        {tour.imageUrls && tour.imageUrls[0] ? (
+                          <img 
+                            src={tour.imageUrls[0]} 
+                            alt={tour.title} 
+                            className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-300"
+                          />
+                        ) : (
+                          <div className="h-full w-full flex items-center justify-center bg-gray-200 text-gray-400">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                            </svg>
+                          </div>
+                        )}
+                        {tour.featured && (
+                          <div className="absolute top-3 right-3 bg-yellow-400 text-yellow-800 text-xs font-bold px-2.5 py-1.5 rounded-md shadow-sm">
+                            Featured
+                          </div>
+                        )}
+                        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-4">
+                          <h3 className="font-bold text-xl text-white group-hover:text-green-100 transition-colors truncate">
+                            {tour.title}
+                          </h3>
+                          <div className="flex items-center mt-1">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-green-300 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                            </svg>
+                            <span className="text-sm text-green-100">{tour.address}</span>
+                          </div>
                         </div>
+                      </div>
+                      
+                      <div className="p-5 flex-grow flex flex-col justify-between">
+                        <div>
+                          <div className="flex flex-wrap gap-2 mb-4">
+                            <span className="inline-flex items-center text-xs font-medium bg-green-50 text-green-700 rounded-full px-2.5 py-1">
+                              <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                              </svg>
+                              {tour.days} days
+                            </span>
+                            
+                            <span className="inline-flex items-center text-xs font-medium bg-green-50 text-green-700 rounded-full px-2.5 py-1">
+                              <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                              </svg>
+                              Max {tour.maxGroupSize} people
+                            </span>
+                          </div>
+                        </div>
+  
+                        <div className="mt-auto">
+                          <div className="flex items-center justify-between">
+                            <div>
+                              <span className="text-gray-500 text-sm">Per Person</span>
+                              {tour.discountedPrice > 0 ? (
+                                <div className="flex flex-col">
+                                  <p className="text-sm text-gray-500 line-through">
+                                    Rs. {tour.regularPrice.toLocaleString()}
+                                  </p>
+                                  <p className="text-xl font-bold text-green-600">
+                                    Rs. {tour.discountedPrice.toLocaleString()}
+                                  </p>
+                                </div>
+                              ) : (
+                                <p className="text-xl font-bold text-green-600">
+                                  Rs. {tour.regularPrice.toLocaleString()}
+                                </p>
+                              )}
+                            </div>
+                            <button className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white font-medium rounded-lg transition-colors shadow-sm">
+                              View Details
+                            </button>
+                          </div>
+                        </div>
+                      </div>
                     </div>
-                </section>
+                  </Link>
+                ))}
+            </div>
+        )}
+        
+        <div className="text-center mt-10">
+            <Link to="/user/tours" className="inline-block bg-white-600 text-white px-6 py-3 rounded-lg hover:bg-green-300 transition-colors">
+                View All Tours
+            </Link>
+        </div>
+    </div>
+</section>
+
             </div>
         );
     } catch (error) {

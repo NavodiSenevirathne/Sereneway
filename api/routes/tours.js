@@ -33,7 +33,7 @@ router.get('/', getAllTour);
 router.get("/search/getTourBySearch", getTourBySearch);
 
 //get tour by search
-router.get("/search/getFeaturedTours", getFeaturedTour);
+router.get("/getFeaturedTours", getFeaturedTour);
 
 //get tour count
 router.get("/search/getTourCount", getTourCount);
