@@ -50,7 +50,7 @@ export default function Header() {
           </li>
           {token ? (
           <>
- <Link to={user === "admin" ? "/admin/dashboard" : "/dashboard/profile"} className="mr-4">
+ <Link to={user === "admin" ? "/admin/dashboard" : "/dashboard"} className="mr-4">
                 Dashboard
               </Link>            <button onClick={handleLogout} className="text-red-500">Logout</button>
           </>

@@ -20,7 +20,7 @@ const Login = () => {
       if (data.user.role === "admin") {
         navigate("/admin/dashboard");
       } else {
-        navigate("/dashboard/profile");
+        navigate("/");
       }
     } catch (error) {
       alert(error.response?.data?.message || "Login Failed");
