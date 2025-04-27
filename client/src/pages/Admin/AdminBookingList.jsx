@@ -88,7 +88,7 @@ export default function AdminBookings() {
   return (
     <div className="min-h-screen bg-gray-100">
       <div className="container mx-auto p-4 sm:p-8">
-        <h1 className="text-xl sm:text-2xl font-bold mb-6">Bookings Management</h1>
+        <h1 className="text-xl sm:text-2xl font-bold mb-6">Tour Bookings</h1>
         
         {bookings.length === 0 ? (
           <div className="bg-white rounded-lg shadow-md p-6 text-center">

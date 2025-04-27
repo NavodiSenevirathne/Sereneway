@@ -42,6 +42,7 @@ export const addToCart = async (req, res) => {
     let emailErrorMessage = null;
     try {
       await sendTourInfoEmail(email, {
+        tourId:tourDoc.id,
         tourTitle: tourDoc.title,
         tourDetails: tourDoc.description,
         adults,

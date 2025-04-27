@@ -72,7 +72,7 @@ export default function BookingDetail() {
 
   if (loading) return (
     <div className="min-h-screen bg-gray-100">
-      <AdminHeader />
+      
       <div className="container mx-auto p-8">
         <h1 className="text-2xl font-bold mb-6">Booking Details</h1>
         <div className="text-center py-8">Loading booking details...</div>
@@ -82,7 +82,7 @@ export default function BookingDetail() {
 
   if (error) return (
     <div className="min-h-screen bg-gray-100">
-      <AdminHeader />
+      
       <div className="container mx-auto p-8">
         <h1 className="text-2xl font-bold mb-6">Booking Details</h1>
         <div className="bg-red-100 text-red-700 p-4 rounded-lg">Error: {error}</div>
@@ -92,7 +92,7 @@ export default function BookingDetail() {
 
   if (!booking) return (
     <div className="min-h-screen bg-gray-100">
-      <AdminHeader />
+      
       <div className="container mx-auto p-8">
         <h1 className="text-2xl font-bold mb-6">Booking Details</h1>
         <div className="bg-yellow-100 text-yellow-700 p-4 rounded-lg">Booking not found</div>
@@ -102,7 +102,7 @@ export default function BookingDetail() {
 
   return (
     <div className="min-h-screen bg-gray-100">
-      <AdminHeader />
+      
       <div className="container mx-auto p-8">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-2xl font-bold">Booking Details</h1>
@@ -158,7 +158,7 @@ export default function BookingDetail() {
                   </p>
                   {booking.tour?._id && (
                     <Link 
-                      to={`/tours/${booking.tour._id}`}
+                      to={`/admin/tour_packages/${booking.tour._id}`}
                       className="text-blue-600 hover:underline"
                     >
                       View Tour Details

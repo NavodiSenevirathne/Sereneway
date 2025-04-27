@@ -16,6 +16,7 @@ const transporter = nodemailer.createTransport({
 // Send tour info email function
 export const sendTourInfoEmail = async (recipientEmail, tourInfo) => {
   const {
+    tourId,
     tourTitle,
     tourDetails,
     adults,
@@ -32,7 +33,7 @@ export const sendTourInfoEmail = async (recipientEmail, tourInfo) => {
         <h1 style="margin: 0; font-size: 24px;">Your Tour Package Details</h1>
       </div>
       
-      <p style="color: #666;">Thank you for your interest in our tour package. Here are the details of the tour you've added to your cart:</p>
+      <p style="color: #666;">Thank you for your interest in our tour package. Here are the details of the tour you've been interested:</p>
       
       <div style="background-color: #f9f9f9; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
         <h2 style="color: #4CAF50; margin-top: 0;">${tourTitle}</h2>
@@ -48,10 +49,10 @@ export const sendTourInfoEmail = async (recipientEmail, tourInfo) => {
         </ul>
       </div>
       
-      <p style="color: #666;">This tour has been added to your cart. You can complete your booking by visiting our website.</p>
+      <p style="color: #666;">You can complete your booking by visiting our website.</p>
       
       <div style="text-align: center; margin-top: 30px;">
-        <a href="${process.env.WEBSITE_URL || 'http://localhost:5173'}/user/cart" style="background-color: #4CAF50; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; font-weight: bold;">View Cart</a>
+        <a href="${process.env.WEBSITE_URL || 'http://localhost:5173'}/user/tours/${tourId}" style="background-color: #4CAF50; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; font-weight: bold;">View Tour</a>
       </div>
       
       <p style="color: #999; font-size: 12px; margin-top: 30px; text-align: center;">

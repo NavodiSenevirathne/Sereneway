@@ -140,7 +140,7 @@ export default function PackageList() {
                       )}
                     </div>
                     <div className="md:ml-4 mt-2 md:mt-0">
-                      <Link to={`/tour_packages/${pkg._id}`} className="font-medium text-gray-900 hover:text-blue-600">
+                      <Link to={`/admin/tour_packages/${pkg._id}`} className="font-medium text-gray-900 hover:text-blue-600">
                         {pkg.title}
                       </Link>
                       
