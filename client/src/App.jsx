@@ -1,9 +1,6 @@
-import {BrowserRouter , Routes, Route} from 'react-router-dom';
-import Share from './pages/Share';
-import AboutUs from './pages/aboutus';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+//import { CartProvider } from './context/CartContext'; // Import CartProvider
 import Home from './pages/Home';
-import Header from './components/Header';
-import VideoCallForum from './components/VideoCallForm';
 import AdminLayout from './components/AdminLayout';
 import UserLayout from './components/UserLayout';
 import CreatePackage from './pages/Admin/CreatePackage';
@@ -17,24 +14,23 @@ import AdminBookingList from './pages/Admin/AdminBookingList';
 import AdminBookingDetails from './pages/Admin/AdminBookingDetails';
 import UserBookings from './pages/User/UserBookings';
 import TourPerformanceReport from './pages/Admin/TourPerformanceReport';
+import AdminDashboard from './pages/Admin/AdminDashBoard';
+import VideoCallForm from './components/VideoCallForm';
 
 
 export default function App() {
-  return (  //  You need to return JSX
+  return (
     <BrowserRouter>
-    
-    <Header/>
-    <Routes>
-      <Route>
-      <Route path="/" element={<Home />} />
-      <Route path="/share" element={<Share />} />
-      <Route path="/aboutus" element={<AboutUs />} />
-      <Route path="/VideoCallForm" element={<VideoCallForum />} />
-
-      </Route>
-
-      {/* Admin routes with AdminLayout */}
-      <Route path="/admin" element={<AdminLayout />}>
+      
+        <Routes>
+          {/* Home page with default header */}
+          <Route path="/" element={<Home />} />
+          <Route path="/VideoCallForm" element={<VideoCallForm />} />
+          
+          
+          {/* Admin routes with AdminLayout */}
+          <Route path="/admin" element={<AdminLayout />}>
+            <Route index element={<AdminDashboard />} />
             <Route path="create-package" element={<CreatePackage />} />
             <Route path="tour_packages" element={<PackageList />} />
             <Route path="tour_packages/:id" element={<PackageDetailsAdmin />} />
@@ -51,11 +47,9 @@ export default function App() {
             <Route path="tours/:id/booking" element={<Booking />} />
             {/* Remove the booking-success route */}
             <Route path="my-bookings" element={<UserBookings />} />
-            
           </Route>
-
-    </Routes>
-    
+        </Routes>
+      
     </BrowserRouter>
   );
 }

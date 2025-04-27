@@ -474,7 +474,7 @@ export default function CreatePackage() {
           type="number"
           id="days"
           min="1"
-          max="30"
+          max="10"
           className="w-full rounded-lg border border-gray-200 px-4 py-2.5 text-gray-700 focus:border-blue-400 focus:outline-none focus:ring-1 focus:ring-blue-400"
           required
           value={formData.days}
@@ -495,7 +495,7 @@ export default function CreatePackage() {
           type="number"
           id="regularPrice"
           min="5000"
-          max="1000000"
+          max="100000"
           className="w-full rounded-lg border border-gray-200 pl-8 pr-4 py-2.5 text-gray-700 focus:border-blue-400 focus:outline-none focus:ring-1 focus:ring-blue-400"
           required
           value={formData.regularPrice}
@@ -517,7 +517,7 @@ export default function CreatePackage() {
             type="number"
             id="discountedPrice"
             min="0"
-            max="1000000"
+            max="100000"
             className={`w-full rounded-lg border ${validationErrors.discountedPrice ? 'border-red-500' : 'border-gray-200'} pl-8 pr-4 py-2.5 text-gray-700 focus:border-blue-400 focus:outline-none focus:ring-1 focus:ring-blue-400`}
             value={formData.discountedPrice}
             onChange={handleChange}

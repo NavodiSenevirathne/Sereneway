@@ -241,7 +241,7 @@ export default function Home() {
         )}
         
         <div className="text-center mt-10">
-            <Link to="/user/tours" className="inline-block bg-white-600 text-white px-6 py-3 rounded-lg hover:bg-green-300 transition-colors">
+            <Link to="/user/tours" className="inline-block bg-gray-500 text-white px-6 py-3 rounded-lg hover:bg-green-300 transition-colors">
                 View All Tours
             </Link>
         </div>

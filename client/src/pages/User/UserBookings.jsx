@@ -69,7 +69,7 @@ export default function MyBookingsPage() {
   };
   
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-100">
       {/* Header with gradient background */}
       <div className="bg-gradient-to-r from-green-600 to-emerald-500 shadow-md">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
