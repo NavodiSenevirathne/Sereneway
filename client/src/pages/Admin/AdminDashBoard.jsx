@@ -48,7 +48,7 @@ export default function AdminDashboard() {
       
       {/* Welcome Message */}
       <div className="mb-8">
-        <h2 className="text-2xl font-bold text-gray-800">Welcome Aamir</h2>
+        <h2 className="text-2xl font-bold text-gray-800">Welcome charya</h2>
         <p className="text-gray-600">All systems are running smoothly! You have 3 unread alerts!</p>
       </div>
 

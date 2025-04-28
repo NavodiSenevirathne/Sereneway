@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import React from 'react';
 import { Link } from "react-router-dom";
 import axios from "axios";
+import Footer from "../components/Footer";
 
 
 export default function Home() {
@@ -22,9 +23,9 @@ export default function Home() {
     
     // Featured tour images
     const tourImages = [
-        "https://images.unsplash.com/photo-1467269204594-9661b134dd2b?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80", // Paris
-        "https://images.unsplash.com/photo-1533929736458-ca588d08c8be?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80", // Bali
-        "https://images.unsplash.com/photo-1493246507139-91e8fad9978e?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80"  // Maldives
+        "https://images.unsplash.com/photo-1467269204594-9661b134dd2b?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80", 
+        "https://images.unsplash.com/photo-1533929736458-ca588d08c8be?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80", 
+        "https://images.unsplash.com/photo-1493246507139-91e8fad9978e?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" 
     ];
     
     // Tour package names
@@ -247,7 +248,7 @@ export default function Home() {
         </div>
     </div>
 </section>
-
+<Footer />
             </div>
         );
     } catch (error) {
