@@ -35,7 +35,7 @@ app.listen(5001,()=>{
 });
 
 
-app.use("/api/videocalls", videocallRouter); 
+app.use("/api/videocalls", videocallRouter);
 app.use("/api/feedback", feedbackRouter);
 app.use("/api/tours", tourRoute);
 app.use('/api/bookings', bookingRoutes);
