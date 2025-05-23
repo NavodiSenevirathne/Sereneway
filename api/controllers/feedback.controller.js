@@ -32,36 +32,36 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-// Create feedback
+// Create a new feedback
 export const createfeedback = async (req, res, next) => {
   try {
-    console.log("Request Body:", req.body);
+    const { name, email, description, rating, flaggedForReview } = req.body;
 
-    const { name, email, description, rating } = req.body;
+    // Check for hate speech
+    const hasHateSpeech = containsHateSpeech(description);
 
-    // Check for negative words in the description
-    const containsNegativeWords = negativeWords.some((word) =>
-      description.toLowerCase().includes(word)
-    );
+    // Create new feedback
+    const newFeedback = new Feedback({
+      name,
+      email,
+      description,
+      rating,
+      flaggedForReview: flaggedForReview || hasHateSpeech,
+    });
 
-    if (containsNegativeWords) {
-      // If negative words are found, send warning email
-      console.log("Negative words found, sending email...");
-      await sendWarningEmail(email, description);
+    // Save feedback
+    const savedFeedback = await newFeedback.save();
+
+    // If feedback contains hate speech, send warning email
+    if (hasHateSpeech) {
+      await sendWarningEmail(email, name, description);
     }
 
-    // Create feedback in the database
-    const feedback = await Feedback.create(req.body);
-
-    // Send the response only once after handling everything
-    return res.status(201).json(feedback);
+    return res.status(201).json(savedFeedback);
   } catch (error) {
-    console.error("Error in createfeedback:", error);
     next(error);
   }
 };
-
-
 
 // Get all feedbacks
 export const getAllFeedbacks = async (req, res, next) => {
@@ -89,16 +89,30 @@ export const getFeedbackById = async (req, res, next) => {
 // Update feedback
 export const updateFeedback = async (req, res, next) => {
   try {
-    const updatedFeedback = await Feedback.findByIdAndUpdate(
-      req.params.id,
-      req.body,
-      { new: true }
-    );
-
-    if (!updatedFeedback) {
+    const { name, email, description, rating } = req.body;
+    const feedback = await Feedback.findById(req.params.id);
+    
+    if (!feedback) {
       return res.status(404).json({ message: "Feedback not found" });
     }
-
+    
+    // Check for hate speech in updated description
+    const hasHateSpeech = containsHateSpeech(description);
+    
+    // Update feedback
+    feedback.name = name || feedback.name;
+    feedback.email = email || feedback.email;
+    feedback.description = description || feedback.description;
+    feedback.rating = rating || feedback.rating;
+    feedback.flaggedForReview = hasHateSpeech || feedback.flaggedForReview;
+    
+    const updatedFeedback = await feedback.save();
+    
+    // If feedback now contains hate speech, send warning email
+    if (hasHateSpeech && !feedback.flaggedForReview) {
+      await sendWarningEmail(email, name, description);
+    }
+    
     return res.status(200).json(updatedFeedback);
   } catch (error) {
     next(error);
@@ -108,12 +122,11 @@ export const updateFeedback = async (req, res, next) => {
 // Delete feedback
 export const deleteFeedback = async (req, res, next) => {
   try {
-    const deletedFeedback = await Feedback.findByIdAndDelete(req.params.id);
-
-    if (!deletedFeedback) {
+    const feedback = await Feedback.findById(req.params.id);
+    if (!feedback) {
       return res.status(404).json({ message: "Feedback not found" });
     }
-
+    await Feedback.findByIdAndDelete(req.params.id);
     return res.status(200).json({ message: "Feedback deleted successfully" });
   } catch (error) {
     next(error);
@@ -203,6 +216,81 @@ export const getFeedbackStats = async (req, res, next) => {
           };
 
     return res.status(200).json(result);
+  } catch (error) {
+    next(error);
+  }
+};
+
+// Admin: Get all feedbacks with additional admin info
+export const getAdminFeedbacks = async (req, res, next) => {
+  try {
+    console.log('Admin requesting all feedbacks');
+    // Check if user is admin (this should be handled by middleware)
+    // For now, we'll just return all feedbacks
+    const feedbacks = await Feedback.find().sort({ createdAt: -1 });
+    console.log(`Found ${feedbacks.length} feedbacks`);
+    return res.status(200).json(feedbacks);
+  } catch (error) {
+    console.error('Error in getAdminFeedbacks:', error);
+    next(error);
+  }
+};
+
+// Admin: Delete feedback
+export const adminDeleteFeedback = async (req, res, next) => {
+  try {
+    // Check if user is admin (this should be handled by middleware)
+    const feedback = await Feedback.findById(req.params.id);
+    if (!feedback) {
+      return res.status(404).json({ message: "Feedback not found" });
+    }
+    await Feedback.findByIdAndDelete(req.params.id);
+    return res.status(200).json({ message: "Feedback deleted successfully" });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// Admin: Reply to feedback
+export const adminReplyToFeedback = async (req, res, next) => {
+  try {
+    // Check if user is admin (this should be handled by middleware)
+    const { text, adminName } = req.body;
+
+    const feedback = await Feedback.findById(req.params.id);
+    if (!feedback) {
+      return res.status(404).json({ message: "Feedback not found" });
+    }
+
+    // Add reply to feedback
+    if (!feedback.replies) {
+      feedback.replies = [];
+    }
+
+    feedback.replies.push({
+      text,
+      adminName,
+      date: new Date(),
+    });
+
+    await feedback.save();
+
+    // Send email notification to customer about the reply
+    await transporter.sendMail({
+      from: process.env.EMAIL_USER || "your-email@gmail.com",
+      to: feedback.email,
+      subject: "Response to your feedback",
+      html: `
+        <h2>We've responded to your feedback</h2>
+        <p>Dear ${feedback.name},</p>
+        <p>Thank you for sharing your thoughts with us. Our team has responded to your feedback:</p>
+        <p><em>"${text}"</em></p>
+        <p>If you have any further questions or concerns, please don't hesitate to reach out.</p>
+        <p>Best regards,<br>${adminName}<br>The Tour Management Team</p>
+      `,
+    });
+
+    return res.status(200).json(feedback);
   } catch (error) {
     next(error);
   }

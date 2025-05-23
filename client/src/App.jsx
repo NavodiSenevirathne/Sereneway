@@ -1,9 +1,11 @@
 import {BrowserRouter , Routes, Route} from 'react-router-dom';
-import Share from './pages/Share';
-import AboutUs from './pages/aboutus';
-import Home from './pages/home';
+import Share from './pages/User/Share';
+import AboutUs from './pages/User/AboutUs';
+import Home from './pages/User/Home';
 import Header from './components/Header';
-import VideoCallForum from './components/VideoCallForm';
+import VideoCallForum from './pages/User/VideoCallForm';
+import ShareAdmin from './pages/Admin/ShareAdmin';
+import VideoCallFormAdmin from './pages/Admin/VideoCallFormAdmin';
 
 export default function App() {
   return (  //  You need to return JSX
@@ -14,6 +16,8 @@ export default function App() {
       <Route path="/share" element={<Share />} />
       <Route path="/aboutus" element={<AboutUs />} />
       <Route path="/VideoCallForm" element={<VideoCallForum />} />
+      <Route path="/admin/feedback" element={<ShareAdmin />} />
+      <Route path="/admin/video-calls" element={<VideoCallFormAdmin />} />
     </Routes>
     
     </BrowserRouter>

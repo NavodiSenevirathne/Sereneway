@@ -45,6 +45,23 @@ const VideoCallSchema = new Schema({
   acceptedTerms: {
     type: Boolean,
     default: true
+  },
+  reply: {
+    type: String,
+    trim: true,
+    default: ''
+  },
+  repliedAt: {
+    type: Date,
+    default: null
+  },
+  flaggedForReview: {
+    type: Boolean,
+    default: false
+  },
+  flaggedAt: {
+    type: Date,
+    default: null
   }
 }, { timestamps: true });
 

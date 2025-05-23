@@ -8,6 +8,8 @@ export default defineConfig({
       "/api": {
         target: "http://localhost:5001",
         secure: false,
+        changeOrigin: true,
+        rewrite: (path) => path
       },
     },
   },

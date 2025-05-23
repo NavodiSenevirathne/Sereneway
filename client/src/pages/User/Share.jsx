@@ -10,7 +10,6 @@ export default function Share() {
   const [starCounts, setStarCounts] = useState([0, 0, 0, 0, 0]);
   const [totalRatings, setTotalRatings] = useState(0);
   const [sortOption, setSortOption] = useState('newest');
-  const [editingFeedback, setEditingFeedback] = useState(null);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -79,54 +78,21 @@ export default function Share() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
     try {
-      if (editingFeedback) {
-        await axios.put(`/api/feedback/${editingFeedback._id}`, formData);
-      } else {
-        // Check for hate speech before submission
-        const hateWords = ['hate', 'terrible', 'awful', 'worst', 'garbage', 'trash', 'useless', 'pathetic', 'horrible', 'disappointing'];
-        const containsHateWords = hateWords.some(word => 
-          formData.description.toLowerCase().includes(word.toLowerCase())
-        );
-        
-        // If it contains hate speech and has a low rating, we'll add a flag
-        const shouldFlagForReview = containsHateWords && formData.rating === 1;
-        
-        // Proceed with submission, including the flag
-        await axios.post('/api/feedback/create', {
-          ...formData,
-          flaggedForReview: shouldFlagForReview
-        });
-      }
-      
-      setEditingFeedback(null);
+      setLoading(true);
+      await axios.post('/api/feedback', {
+        name: formData.name,
+        email: formData.email,
+        rating: formData.rating,
+        description: formData.description
+      });
       setFormData({ name: '', email: '', description: '', rating: 0 });
       fetchFeedbacks();
     } catch (error) {
-      console.error('Error saving feedback:', error);
+      console.error('Error submitting feedback:', error);
+    } finally {
+      setLoading(false);
     }
-  };
-
-  const handleDelete = async (id) => {
-    try {
-      await axios.delete(`/api/feedback/${id}`);
-      fetchFeedbacks();
-    } catch (error) {
-      console.error('Error deleting feedback:', error);
-    }
-  };
-
-  const handleEdit = (feedback) => {
-    setEditingFeedback(feedback);
-    setFormData({
-      name: feedback.name,
-      email: feedback.email,
-      description: feedback.description,
-      rating: feedback.rating
-    });
-    // Scroll to form
-    document.getElementById('review-form').scrollIntoView({ behavior: 'smooth' });
   };
 
   const handleReply = async (feedbackId) => {
@@ -286,22 +252,6 @@ export default function Share() {
                   
                   {/* Action buttons */}
                   <div className="flex space-x-2">
-                    {(isAdmin || feedback.isOwnedByCurrentUser) && (
-                      <>
-                        <button 
-                          onClick={() => handleEdit(feedback)}
-                          className="text-blue-500 hover:text-blue-700"
-                        >
-                          <FaPen />
-                        </button>
-                        <button 
-                          onClick={() => handleDelete(feedback._id)}
-                          className="text-red-500 hover:text-red-700"
-                        >
-                          <FaTrash />
-                        </button>
-                      </>
-                    )}
                     {isAdmin && (
                       <button 
                         onClick={() => setReplyingTo(feedback._id)}
@@ -366,7 +316,7 @@ export default function Share() {
         {/* Always visible Review Form */}
         <div id="review-form" className="bg-white rounded-lg shadow-lg p-6 mb-8">
           <h2 className="text-xl font-semibold mb-4">
-            {editingFeedback ? 'Edit Your Review' : 'Share Your Experience'}
+            Share Your Experience
           </h2>
           <form onSubmit={handleSubmit}>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
@@ -429,23 +379,11 @@ export default function Share() {
               ></textarea>
             </div>
             <div className="flex justify-end">
-              {editingFeedback && (
-                <button
-                  type="button"
-                  onClick={() => {
-                    setEditingFeedback(null);
-                    setFormData({ name: '', email: '', description: '', rating: 0 });
-                  }}
-                  className="px-4 py-2 mr-2 text-gray-600 hover:text-gray-800"
-                >
-                  Cancel
-                </button>
-              )}
               <button
                 type="submit"
                 className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
               >
-                {editingFeedback ? 'Update Review' : 'Submit Review'}
+                Submit Review
               </button>
             </div>
           </form>
