@@ -1,12 +1,13 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { districts } from "../assets/data/districts";
-import { places } from "../assets/data/places";
-import { tourTypes } from "../assets/data/tourTypes";
-import overviewImage from "../assets/images/overview.png";
-import Alert from "../components/Alert";
+import { districts } from "../../assets/data/districts";
+import { places } from "../../assets/data/places";
+import { tourTypes } from "../../assets/data/tourTypes";
+import Alert from "../../components/Alert";
 
-export default function TourRequestForm() {
+export default function RequestTour() {
+  const email = localStorage.getItem("email");
+
   const [formSubmitted, setFormSubmitted] = useState(false);
   const [successData, setSuccessData] = useState();
   const [alert, setAlert] = useState(null);
@@ -132,13 +133,14 @@ export default function TourRequestForm() {
         const response = await axios.post(
           `${
             apiUrl
-              ? ` ${apiUrl}/api/tours/request`
-              : `http://localhost:5000/api/tours/request`
+              ? ` ${apiUrl}/api/customize-tours/request`
+              : `http://localhost:5000/api/customize-tours/request`
           }`,
           {
             ...formData,
             tourType: formData.tourType.label,
             basePricePerPerson: formData.tourType.basePricePerPerson,
+            userId: email,
           }
         );
 

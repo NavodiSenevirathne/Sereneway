@@ -2,19 +2,21 @@ import axios from "axios";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import React, { useEffect, useState } from "react";
-import { districts } from "../assets/data/districts";
-import { places } from "../assets/data/places";
-import { tourTypes } from "../assets/data/tourTypes";
-import Alert from "../components/Alert";
+import { districts } from "../../assets/data/districts";
+import { places } from "../../assets/data/places";
+import { tourTypes } from "../../assets/data/tourTypes";
+import Alert from "../../components/Alert";
 
 dayjs.extend(relativeTime);
 
 const MAX_RESPONSE_TIME = 2; // 2 days
 
 export default function MyRequestedTours() {
+  const email = localStorage.getItem("email");
+
   const [tours, setTours] = useState([]);
   const [expandedTourId, setExpandedTourId] = useState(null);
-  const [searchTerm, setSearchTerm] = useState("test123@gmail.com");
+  const [searchTerm, setSearchTerm] = useState("");
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
 
@@ -62,7 +64,7 @@ export default function MyRequestedTours() {
   // Function to fetch the list of tours
   const fetchTours = () => {
     const apiUrl = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
-    const url = `${apiUrl}/api/tours/requests?page=${page}&search=${searchTerm}&limit=10`;
+    const url = `${apiUrl}/api/customize-tours/my-tour-requests/${email}?page=${page}&search=${searchTerm}&limit=10`;
 
     axios
       .get(url)
@@ -77,20 +79,15 @@ export default function MyRequestedTours() {
 
   const handleEdit = (tour) => {
     setSelectedTour(tour);
-    const test = {
-      ...tour,
-      tourType: [
-        { label: tour.tourType, basePricePerPerson: tour.basePricePerPerson },
-      ],
-    };
 
-    console.log(test);
+    console.log("test", tour);
 
     setFormData({
       ...tour,
-      tourType: [
-        { label: tour.tourType, basePricePerPerson: tour.basePricePerPerson },
-      ],
+      tourStartDate: tour.tourStartDate ? tour.tourStartDate.split("T")[0] : "",
+      tourType: tour.tourType,
+      selectedTourType:
+        tourTypes.find((type) => type.label === tour.tourType) || [],
     });
     setShowEditModal(true);
   };
@@ -154,8 +151,9 @@ export default function MyRequestedTours() {
     if (formData.selectedLocations.length === 0)
       newErrors.selectedLocations = "Please select at least one location";
 
-    if (!formData.tourType || !formData.tourType.label)
-      newErrors.tourType = "Tour type is required";
+    console.log(formData.tourType, formData.tourType.label);
+
+    if (!formData.tourType) newErrors.tourType = "Tour type is required";
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -195,6 +193,8 @@ export default function MyRequestedTours() {
 
   // Edit the tour request
   const handleEditTour = async (e) => {
+    console.log(formData);
+
     e.preventDefault();
 
     if (validateForm()) {
@@ -203,13 +203,14 @@ export default function MyRequestedTours() {
         const response = await axios.put(
           `${
             apiUrl
-              ? ` ${apiUrl}/api/tours/request/${selectedTour._id}`
-              : `http://localhost:5000/api/tours/request/${selectedTour._id}`
+              ? ` ${apiUrl}/api/customize-tours/request/${selectedTour._id}`
+              : `http://localhost:5000/api/customize-tours/request/${selectedTour._id}`
           }`,
           {
             ...formData,
             tourType: formData.tourType.label,
             basePricePerPerson: formData.tourType.basePricePerPerson,
+            userId: email,
           }
         );
 
@@ -277,8 +278,8 @@ export default function MyRequestedTours() {
     const apiUrl = import.meta.env.VITE_API_BASE_URL;
     const url = `${
       apiUrl
-        ? `${apiUrl}/api/tours/request/${selectedTourId}`
-        : `http://localhost:5000/api/tours/request/${selectedTourId}`
+        ? `${apiUrl}/api/customize-tours/request/${selectedTourId}`
+        : `http://localhost:5000/api/customize-tours/request/${selectedTourId}`
     }`;
 
     axios
@@ -308,6 +309,10 @@ export default function MyRequestedTours() {
   useEffect(() => {
     fetchTours();
   }, [page, searchTerm]);
+
+  useEffect(() => {
+    console.log("Form Data:", formData);
+  }, [formData]);
 
   return (
     <>
@@ -596,6 +601,7 @@ export default function MyRequestedTours() {
                             className="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                             //required
                             onChange={handleChange}
+                            value={formData.tourStartLocation}
                           >
                             <option value="">Select Tour Start Location</option>
                             {districts.map((district) => (
@@ -622,6 +628,7 @@ export default function MyRequestedTours() {
                             //required
                             className="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                             onChange={handleChange}
+                            value={formData.tourStartDate}
                           />
                           {errors.tourStartDate && (
                             <p className="text-red-500 text-sm">
@@ -659,7 +666,7 @@ export default function MyRequestedTours() {
                             className="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                             //required
                             onChange={handleChange}
-                            value={formData.tourType.label} // Set the selected label
+                            value={formData.tourType} // Set the selected label
                           >
                             {tourTypes.map((type) => (
                               <option key={type.label} value={type.label}>

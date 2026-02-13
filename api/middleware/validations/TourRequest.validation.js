@@ -25,6 +25,7 @@ export const validateTourRequest = [
   body("basePricePerPerson")
     .isFloat({ min: 0 })
     .withMessage("Base price must be a positive number"),
+  body("userId").notEmpty().withMessage("UserId is required"),
 ];
 
 // ✅ Validation for updating a tour request (some fields optional)

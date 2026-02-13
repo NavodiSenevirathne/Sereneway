@@ -42,6 +42,7 @@ const TourRequestSchema = new mongoose.Schema(
       default: "Pending",
     },
     adminReason: { type: String }, // If rejected, reason from admin
+    userId: { type: String, required: true },
   },
   { timestamps: true }
 );

@@ -14,6 +14,7 @@ const Login = () => {
       console.log('data', data)
       localStorage.setItem("token", data.token);
       localStorage.setItem("user", data.user.role);
+      localStorage.setItem("email", data.user.email);
       alert("Login Successful");
 
       // Redirect based on user role

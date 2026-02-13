@@ -1,8 +1,10 @@
 import axios from "axios";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
+import { saveAs } from "file-saver";
+import Papa from "papaparse";
 import React, { useEffect, useState } from "react";
-import Alert from "../components/Alert";
+import Alert from "../../components/Alert";
 
 dayjs.extend(relativeTime);
 
@@ -73,7 +75,7 @@ export default function RequestedTours() {
   // Function to fetch the list of tours
   const fetchTours = () => {
     const apiUrl = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
-    const url = `${apiUrl}/api/tours/requests?page=${page}&search=${searchTerm}&limit=10`;
+    const url = `${apiUrl}/api/customize-tours/requests?page=${page}&search=${searchTerm}&limit=10`;
 
     axios
       .get(url)
@@ -105,8 +107,8 @@ export default function RequestedTours() {
     const apiUrl = import.meta.env.VITE_API_BASE_URL;
     const url = `${
       apiUrl
-        ? `${apiUrl}/api/tours/request/${selectedTour._id}/approve`
-        : `http://localhost:5000/api/tours/request/${selectedTour._id}/approve`
+        ? `${apiUrl}/api/customize-tours/request/${selectedTour._id}/approve`
+        : `http://localhost:5000/api/customize-tours/request/${selectedTour._id}/approve`
     }`;
 
     axios
@@ -143,8 +145,8 @@ export default function RequestedTours() {
     const apiUrl = import.meta.env.VITE_API_BASE_URL;
     const url = `${
       apiUrl
-        ? `${apiUrl}/api/tours/request/${selectedTour._id}/reject`
-        : `http://localhost:5000/api/tours/request/${selectedTour._id}/reject`
+        ? `${apiUrl}/api/customize-tours/request/${selectedTour._id}/reject`
+        : `http://localhost:5000/api/customize-tours/request/${selectedTour._id}/reject`
     }`;
 
     axios
@@ -171,8 +173,8 @@ export default function RequestedTours() {
     const apiUrl = import.meta.env.VITE_API_BASE_URL;
     const url = `${
       apiUrl
-        ? `${apiUrl}/api/tours/request/${selectedTourId}`
-        : `http://localhost:5000/api/tours/request/${selectedTourId}`
+        ? `${apiUrl}/api/customize-tours/request/${selectedTourId}`
+        : `http://localhost:5000/api/customize-tours/request/${selectedTourId}`
     }`;
 
     axios
@@ -203,6 +205,43 @@ export default function RequestedTours() {
     fetchTours();
   }, [page, searchTerm]);
 
+  const exportToCSV = () => {
+    if (!tours.length) return;
+
+    const formattedData = tours.map((tour) => ({
+      "Tour ID": getShortTourId(tour._id),
+      Name: tour.name,
+      Email: tour.email,
+      "Contact Number": tour.contactNumber,
+      Status: tour.status,
+      "Admin Comment": tour.adminReason || "-",
+      "Created At": dayjs(tour.createdAt).format("DD/MM/YYYY HH:mm"),
+      "Tour Start Location": tour.tourStartLocation,
+      "Tour Start Date": dayjs(tour.tourStartDate).format("DD/MM/YYYY"),
+      "Estimated End Date": dayjs(tour.estimatedEndDate).format("DD/MM/YYYY"),
+      "Tour Type": tour.tourType,
+      "Number of People": tour.numberOfPeople,
+      "Tour Duration (days)": tour.tourDuration,
+      "Estimated Budget ($)": tour.estimatedBudget,
+      "Estimated Time (hrs)": tour.estimatedTimeHours.toFixed(2),
+      "Selected Locations": tour.selectedLocations
+        .map(
+          (loc) =>
+            `${loc.locationName} (${loc.distance}km x $${loc.pricePerUnit})`
+        )
+        .join(" | "),
+      "Cost Breakdown": tour.costBreakdown
+        .map((item) => `${item.locationName}: $${item.cost}`)
+        .join(" | "),
+      Summary: tour.summary,
+      Note: tour.note || "-",
+    }));
+
+    const csv = Papa.unparse(formattedData);
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    saveAs(blob, `Requested_Tours_Report_${dayjs().format("YYYY-MM-DD")}.csv`);
+  };
+
   return (
     <>
       <div data-name="about-page" className="py-16">
@@ -215,7 +254,13 @@ export default function RequestedTours() {
             or send an email.
           </p>
 
-          <div className="mb-4 flex justify-end items-center relative">
+          <div className="flex justify-between items-center mb-4">
+            <button
+              onClick={exportToCSV}
+              className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
+            >
+              Download Report
+            </button>
             <input
               type="text"
               placeholder="Search by Name, Email, or Contact Number"
@@ -223,7 +268,6 @@ export default function RequestedTours() {
               onChange={(e) => setSearchTerm(e.target.value)}
               className="border border-gray-300 p-2 pr-10 rounded-md w-1/2"
             />
-            <i className="fas fa-search absolute right-3 text-gray-500"></i>
           </div>
 
           <div className="overflow-x-auto bg-white rounded-md">

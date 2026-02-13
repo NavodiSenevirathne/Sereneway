@@ -1,6 +1,6 @@
 import { validationResult } from "express-validator";
 import TourRequest from "../models/TourRequest.model.js";
-import { sendEmail } from "../utils/email.js";
+import { sendEmail } from "../utils/customizeTourRequestEmailService.js";
 
 // 📌 Create a new tour request
 export const createTourRequest = async (req, res) => {
@@ -23,6 +23,7 @@ export const createTourRequest = async (req, res) => {
       tourType,
       basePricePerPerson,
       note,
+      userId,
     } = req.body;
 
     // ✅ Step 2: Ensure required fields exist
@@ -100,6 +101,7 @@ export const createTourRequest = async (req, res) => {
       summary,
       note,
       status: "Pending",
+      userId,
     });
 
     await tourRequest.save();
@@ -305,6 +307,50 @@ export const getAllTourRequests = async (req, res) => {
           ],
         }
       : {};
+
+    // Get total count for pagination
+    const totalRecords = await TourRequest.countDocuments(searchFilter);
+
+    // Fetch tour requests with search and pagination
+    const tourRequests = await TourRequest.find(searchFilter)
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limitNumber);
+
+    res.status(200).json({
+      success: true,
+      data: tourRequests,
+      totalPages: Math.ceil(totalRecords / limitNumber),
+      currentPage: pageNumber,
+      totalRecords,
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// 📌 Get all my tour requests, sorted by createdAt in descending order
+export const getAllMyTourRequests = async (req, res) => {
+  try {
+    const { page = 1, limit = 5, search = "" } = req.query;
+    const { userId } = req.params;
+
+    // Pagination settings
+    const pageNumber = parseInt(page, 10);
+    const limitNumber = parseInt(limit, 10);
+    const skip = (pageNumber - 1) * limitNumber;
+
+    // Search filter
+    const searchFilter = {
+      userId, // 👉 Filter by userId
+      ...(search && {
+        $or: [
+          { name: { $regex: search, $options: "i" } },
+          { email: { $regex: search, $options: "i" } },
+          { contactNumber: { $regex: search, $options: "i" } },
+        ],
+      }),
+    };
 
     // Get total count for pagination
     const totalRecords = await TourRequest.countDocuments(searchFilter);
